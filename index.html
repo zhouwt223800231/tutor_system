@@ -10,7 +10,7 @@
   <div id="app">
     <div class="header">
       <h2>📚 家教课程管理系统</h2>
-      <span class="version">v2.2</span>
+      <span class="version">v2.3</span>
     </div>
 
     <div class="student-bar">
@@ -21,11 +21,11 @@
     <div class="tabs">
       <button class="tab active" data-tab="before">课前计划</button>
       <button class="tab" data-tab="after">课后记录</button>
-      <button class="tab" data-tab="export">导出预览</button>
     </div>
 
-    <!-- 课前计划 -->
+    <!-- ========== 课前计划 ========== -->
     <div class="panel active" id="panel-before">
+      <!-- 课程安排表 -->
       <div class="card">
         <div class="card-title">📋 课程安排表</div>
         <div class="plan-hint">💡 拖拽 ⋮⋮ 可调整顺序，hover 行可插入新课程</div>
@@ -43,20 +43,34 @@
         </table>
         <button class="add-row-btn" onclick="addPlanRow()">+ 在末尾添加课程</button>
       </div>
+
+      <!-- 课前计划导出预览（实时） -->
+      <div class="card export-card">
+        <div class="card-title">📤 课程计划导出预览</div>
+        <div class="export-preview" id="planExportPreview"></div>
+        <div class="export-actions">
+          <button class="btn btn-primary" onclick="copyPlanExport()">📋 复制文本</button>
+        </div>
+      </div>
     </div>
 
-    <!-- 课后记录 -->
+    <!-- ========== 课后记录 ========== -->
     <div class="panel" id="panel-after">
+      <!-- 上课日期 -->
       <div class="card">
         <div class="card-title">📅 上课日期</div>
         <input type="date" id="recordDate" class="date-input" />
       </div>
+
+      <!-- 课程内容大纲 -->
       <div class="card">
         <div class="card-title">📝 课程内容大纲</div>
         <div class="section-label">点击节点右侧按钮添加子项，直接输入编辑内容</div>
         <div class="outline-editor" id="outlineEditor"></div>
         <button class="add-row-btn" onclick="addTopLevelNode()">+ 添加一级主题</button>
       </div>
+
+      <!-- 学生表现 -->
       <div class="card">
         <div class="card-title">💡 学生表现</div>
         <div class="status-row">
@@ -69,40 +83,39 @@
         </div>
         <textarea id="recordPerformance" placeholder="学生的理解程度、积极性、薄弱环节..."></textarea>
       </div>
+
+      <!-- 作业布置 -->
       <div class="card">
         <div class="card-title">📚 作业布置</div>
         <textarea id="recordHomework" placeholder="练习册页码、错题整理、预习内容..."></textarea>
       </div>
+
+      <!-- 家长反馈 -->
       <div class="card">
         <div class="card-title">💬 家长反馈</div>
         <textarea id="recordFeedback" placeholder="给家长看的反馈内容，建议配合学生在家如何巩固..."></textarea>
       </div>
+
+      <!-- 保存按钮 -->
       <button class="btn btn-primary save-btn" onclick="saveRecord()">保存课后记录</button>
 
+      <!-- 历史记录 -->
       <div class="history-section">
-        <div class="card-title">📂 历史记录</div>
+        <div class="card-title">📂 历史记录（点击可查看/编辑）</div>
         <div class="history-list" id="historyList"></div>
       </div>
-    </div>
 
-    <!-- 导出预览 -->
-    <div class="panel" id="panel-export">
-      <div class="card">
-        <div class="card-title">📤 导出设置</div>
-        <div class="export-settings">
-          <select id="exType">
-            <option value="record">课后记录（发给学生/家长）</option>
-            <option value="plan">课程计划表</option>
-          </select>
-          <select id="exRecord"></select>
+      <!-- 课后记录导出预览 -->
+      <div class="card export-card">
+        <div class="card-title">📤 课后记录导出预览</div>
+        <div class="export-record-select">
+          <label>选择要导出的记录：</label>
+          <select id="exRecord" onchange="updateRecordExportPreview()"></select>
         </div>
-      </div>
-      <div class="card">
-        <div class="card-title">👁️ 预览</div>
-        <div class="export-preview" id="exportPreview"></div>
+        <div class="export-preview" id="recordExportPreview"></div>
         <div class="export-actions">
-          <button class="btn btn-primary" onclick="copyText()">📋 复制文本</button>
-          <button class="btn" onclick="downloadImage()">🖼️ 保存图片</button>
+          <button class="btn btn-primary" onclick="copyRecordExport()">📋 复制文本</button>
+          <button class="btn" onclick="downloadRecordImage()">🖼️ 保存图片</button>
         </div>
       </div>
     </div>
