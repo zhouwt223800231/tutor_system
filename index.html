@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家教课程管理系统</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <div class="header">
+      <h2>📚 家教课程管理系统</h2>
+      <span class="version">v2.1</span>
+    </div>
 
+    <div class="student-bar">
+      <div class="student-select" id="studentChips"></div>
+      <button class="add-student-btn" onclick="openAddStudent()">+ 添加学生</button>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="before">课前计划</button>
+      <button class="tab" data-tab="after">课后记录</button>
+      <button class="tab" data-tab="export">导出预览</button>
+    </div>
+
+    <!-- 课前计划 -->
+    <div class="panel active" id="panel-before">
+      <div class="card">
+        <div class="card-title">📋 课程安排表</div>
+        <table class="plan-table" id="planTable">
+          <thead>
+            <tr>
+              <th class="num-col">课次</th>
+              <th class="date-col">日期</th>
+              <th>课程内容</th>
+              <th class="action-col"></th>
+            </tr>
+          </thead>
+          <tbody id="planBody"></tbody>
+        </table>
+        <button class="add-row-btn" onclick="addPlanRow()">+ 添加课程</button>
+      </div>
+    </div>
+
+    <!-- 课后记录 -->
+    <div class="panel" id="panel-after">
+      <div class="card">
+        <div class="card-title">📅 上课日期</div>
+        <input type="date" id="recordDate" class="date-input" />
+      </div>
+      <div class="card">
+        <div class="card-title">📝 课程内容大纲</div>
+        <div class="section-label">点击节点右侧按钮添加子项，直接输入编辑内容</div>
+        <div class="outline-editor" id="outlineEditor"></div>
+        <button class="add-row-btn" onclick="addTopLevelNode()">+ 添加一级主题</button>
+      </div>
+      <div class="card">
+        <div class="card-title">💡 学生表现</div>
+        <div class="status-row">
+          <select id="recordStatus">
+            <option>专注投入</option>
+            <option>较为认真</option>
+            <option>偶有分心</option>
+            <option>需要督促</option>
+          </select>
+        </div>
+        <textarea id="recordPerformance" placeholder="学生的理解程度、积极性、薄弱环节..."></textarea>
+      </div>
+      <div class="card">
+        <div class="card-title">📚 作业布置</div>
+        <textarea id="recordHomework" placeholder="练习册页码、错题整理、预习内容..."></textarea>
+      </div>
+      <div class="card">
+        <div class="card-title">💬 家长反馈</div>
+        <textarea id="recordFeedback" placeholder="给家长看的反馈内容，建议配合学生在家如何巩固..."></textarea>
+      </div>
+      <button class="btn btn-primary save-btn" onclick="saveRecord()">保存课后记录</button>
+
+      <div class="history-section">
+        <div class="card-title">📂 历史记录</div>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- 导出预览 -->
+    <div class="panel" id="panel-export">
+      <div class="card">
+        <div class="card-title">📤 导出设置</div>
+        <div class="export-settings">
+          <select id="exType">
+            <option value="record">课后记录（发给学生/家长）</option>
+            <option value="plan">课程计划表</option>
+          </select>
+          <select id="exRecord"></select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">👁️ 预览</div>
+        <div class="export-preview" id="exportPreview"></div>
+        <div class="export-actions">
+          <button class="btn btn-primary" onclick="copyText()">📋 复制文本</button>
+          <button class="btn" onclick="downloadImage()">🖼️ 保存图片</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加学生弹窗 -->
+  <div class="modal-overlay" id="addStudentModal">
+    <div class="modal-box">
+      <h3>➕ 添加新学生</h3>
+      <div class="modal-field">
+        <label>学生姓名</label>
+        <input type="text" id="newStudentName" placeholder="例如：小明" />
+      </div>
+      <div class="modal-field">
+        <label>年级</label>
+        <select id="newStudentGrade">
+          <option>小学三年级</option>
+          <option>小学四年级</option>
+          <option>小学五年级</option>
+          <option>小学六年级</option>
+          <option>初一</option>
+          <option>初二</option>
+          <option>初三</option>
+          <option>高一</option>
+          <option>高二</option>
+          <option>高三</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>科目</label>
+        <select id="newStudentSubject">
+          <option>数学</option>
+          <option>语文</option>
+          <option>英语</option>
+          <option>物理</option>
+          <option>化学</option>
+          <option>生物</option>
+          <option>历史</option>
+          <option>地理</option>
+          <option>政治</option>
+          <option>其他</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeAddStudent()">取消</button>
+        <button class="btn btn-primary" onclick="confirmAddStudent()">确认添加</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/studentManager.js"></script>
+  <script src="js/planTable.js"></script>
+  <script src="js/outlineEditor.js"></script>
+  <script src="js/recordManager.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+  <!-- 如需导出图片，取消下面注释并下载 html2canvas 到 lib/ 目录 -->
+  <!-- <script src="lib/html2canvas.min.js"></script> -->
+</body>
+</html>
