@@ -26,6 +26,10 @@ function selectStudent(id) {
   renderHistory();
   updateRecordExportOptions();
   updateRecordExportPreview();
+  // 如果当前在结课总结面板，刷新数据
+  if (document.getElementById('panel-summary').classList.contains('active')) {
+    renderSummary();
+  }
   persist();
 }
 

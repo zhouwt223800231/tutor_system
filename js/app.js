@@ -43,6 +43,10 @@ function initTabs() {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       this.classList.add('active');
       document.getElementById('panel-' + target).classList.add('active');
+      // 切换到结课总结时刷新数据
+      if (target === 'summary') {
+        renderSummary();
+      }
     });
   });
 }
@@ -52,7 +56,10 @@ function renderEmptyState() {
   document.getElementById('historyList').innerHTML = '<div class="empty-state">请先添加学生</div>';
   document.getElementById('planExportPreview').textContent = '请先添加学生';
   document.getElementById('recordExportPreview').textContent = '请先添加学生';
+  document.getElementById('summaryExportPreview').textContent = '请先添加学生';
   document.getElementById('outlineEditor').innerHTML = '<div class="empty-state">请先添加学生</div>';
+  document.getElementById('summaryTimeline').innerHTML = '<div class="empty-state">请先添加学生</div>';
+  document.getElementById('summaryRecords').innerHTML = '<div class="empty-state">请先添加学生</div>';
 }
 
 function createBackupButtons() {
