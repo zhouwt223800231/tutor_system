@@ -25,7 +25,7 @@ function renderPlanTable() {
         <input type="text" value="${p.num}" onchange="updatePlan(${i}, 'num', this.value)" style="text-align:center;" />
       </td>
       <td class="date-col">
-        <input type="date" value="${p.date}" onchange="updatePlan(${i}, 'date', this.value)" />
+        <input type="date" value="${p.date}" onchange="updatePlan(${i}, 'date', this.value)" placeholder="选择日期" />
       </td>
       <td style="position:relative;">
         <input type="text" value="${escapeHtml(p.content)}" onchange="updatePlan(${i}, 'content', this.value)" placeholder="课程内容" />
