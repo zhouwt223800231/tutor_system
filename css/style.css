@@ -178,12 +178,20 @@ body {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  table-layout: fixed;        /* ← 新增：列宽固定，防止内容撑开 */
+}
+.plan-table thead {
+  display: table-header-group;
+}
+.plan-table tbody {
+  display: table-row-group;
 }
 .plan-table th, .plan-table td {
   border: 1px solid #e5e5ea;
   padding: 10px 8px;
   text-align: left;
   vertical-align: middle;
+  overflow: hidden;           /* ← 新增：防止内容溢出 */
 }
 .plan-table th {
   background: #f5f5f7;
@@ -193,6 +201,7 @@ body {
 }
 .plan-table td input {
   width: 100%;
+  min-width: 0;               /* ← 新增：允许 input 在 flex/表格内收缩 */
   border: none;
   background: transparent;
   font-size: 14px;
@@ -200,11 +209,17 @@ body {
   font-family: inherit;
   outline: none;
 }
+/* ← 新增：隐藏日期输入框的默认日历图标，避免撑开布局 */
+.plan-table td input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.6;
+  cursor: pointer;
+  margin-left: 0;
+}
 .plan-table tr:hover td { background: #fafafa; }
-.plan-table .drag-col { width: 32px; text-align: center; padding: 0; }
-.plan-table .num-col { width: 56px; text-align: center; }
-.plan-table .date-col { width: 130px; }
-.plan-table .action-col { width: 50px; text-align: center; }
+.plan-table .drag-col { width: 36px; text-align: center; padding: 0; }
+.plan-table .num-col { width: 52px; text-align: center; }
+.plan-table .date-col { width: 140px; }
+.plan-table .action-col { width: 44px; text-align: center; }
 .plan-table .action-col .row-actions {
   opacity: 0;
   transition: opacity 0.15s ease;
@@ -525,4 +540,8 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
   .export-settings { flex-direction: column; gap: 8px; }
   .insert-actions { display: none !important; }
   .plan-table .drag-col { width: 24px; }
+    /* 微信/手机端：表格横向滚动，防止内容被压扁 */
+  .card:has(.plan-table) { overflow-x: auto; }
+  .plan-table { min-width: 520px; }
+  .plan-table .date-col { width: 120px; }
 }
