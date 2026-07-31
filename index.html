@@ -10,7 +10,7 @@
   <div id="app">
     <div class="header">
       <h2>📚 家教课程管理系统</h2>
-      <span class="version">v2.1</span>
+      <span class="version">v2.2</span>
     </div>
 
     <div class="student-bar">
@@ -28,9 +28,11 @@
     <div class="panel active" id="panel-before">
       <div class="card">
         <div class="card-title">📋 课程安排表</div>
+        <div class="plan-hint">💡 拖拽 ⋮⋮ 可调整顺序，hover 行可插入新课程</div>
         <table class="plan-table" id="planTable">
           <thead>
             <tr>
+              <th class="drag-col"></th>
               <th class="num-col">课次</th>
               <th class="date-col">日期</th>
               <th>课程内容</th>
@@ -39,7 +41,7 @@
           </thead>
           <tbody id="planBody"></tbody>
         </table>
-        <button class="add-row-btn" onclick="addPlanRow()">+ 添加课程</button>
+        <button class="add-row-btn" onclick="addPlanRow()">+ 在末尾添加课程</button>
       </div>
     </div>
 
@@ -158,7 +160,5 @@
   <script src="js/recordManager.js"></script>
   <script src="js/export.js"></script>
   <script src="js/app.js"></script>
-  <!-- 如需导出图片，取消下面注释并下载 html2canvas 到 lib/ 目录 -->
-  <script src="lib/html2canvas.min.js"></script>
 </body>
 </html>
