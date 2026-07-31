@@ -441,14 +441,7 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
 }
 
 /* ===== 导出卡片（嵌入面板底部） ===== */
-.export-card {
-  background: #fafafa;
-  border: 1px solid #e5e5ea;
-}
-.export-card .card-title {
-  color: #1d1d1f;
-  font-size: 14px;
-}
+
 
 /* 课后记录导出选择器 */
 .export-record-select {
@@ -568,4 +561,337 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
   .export-settings { flex-direction: column; gap: 8px; }
   .insert-actions { display: none !important; }
   .plan-table .drag-col { width: 24px; }
+}
+
+
+/* ===== 微信适配导出预览 ===== */
+.export-preview.wechat-style {
+  background: #fff;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1d1d1f;
+}
+
+/* ===== 时间线样式 ===== */
+.timeline-list {
+  position: relative;
+  padding-left: 20px;
+}
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: #e5e5ea;
+}
+.timeline-item {
+  position: relative;
+  padding: 10px 0 10px 16px;
+  border-bottom: 1px solid #f5f5f7;
+}
+.timeline-item:last-child {
+  border-bottom: none;
+}
+.timeline-dot {
+  position: absolute;
+  left: -18px;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #007aff;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #e5e5ea;
+}
+.timeline-item.last .timeline-dot {
+  background: #34c759;
+  box-shadow: 0 0 0 2px #d4edda;
+}
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.timeline-num {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+.timeline-date {
+  font-size: 12px;
+  color: #86868b;
+}
+.timeline-body {
+  font-size: 13px;
+  color: #515154;
+  line-height: 1.5;
+}
+
+/* ===== 课后记录概要样式 ===== */
+.record-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.record-summary-item {
+  padding: 12px;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  background: #fafafa;
+  transition: all 0.15s ease;
+}
+.record-summary-item:hover {
+  border-color: #d2d2d7;
+  background: #fff;
+}
+.record-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.record-summary-date {
+  font-size: 12px;
+  color: #86868b;
+}
+.record-summary-status {
+  font-size: 12px;
+  font-weight: 500;
+}
+.record-summary-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 4px;
+}
+.record-summary-brief {
+  font-size: 12px;
+  color: #86868b;
+  line-height: 1.5;
+}
+
+/* ===== 结课总结导出预览特殊样式 ===== */
+#summaryExportPreview.wechat-style {
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* ===== 导出卡片 ===== */
+.export-card {
+  background: #fafafa;
+  border: 1px solid #e5e5ea;
+}
+.export-card .card-title {
+  color: #1d1d1f;
+  font-size: 14px;
+}
+
+/* ===== 导出预览区域（截图用） ===== */
+.export-preview {
+  background: #f0f0f2;
+  border-radius: 12px;
+  padding: 16px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+
+/* ===== 导出卡片内部（截图主体） ===== */
+.export-card-inner {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.export-header {
+  text-align: center;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f2;
+}
+
+.export-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin-bottom: 4px;
+}
+
+.export-subtitle {
+  font-size: 12px;
+  color: #86868b;
+}
+
+.export-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.export-meta-date {
+  color: #515154;
+}
+
+.export-meta-status {
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ===== 导出内容项（课前计划用） ===== */
+.export-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.export-item {
+  padding: 12px 14px;
+  background: #f9f9fb;
+  border-radius: 10px;
+  border: 1px solid #f0f0f2;
+}
+
+.export-item-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.export-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: #007aff;
+  background: rgba(0,122,255,0.08);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.export-date {
+  font-size: 12px;
+  color: #86868b;
+}
+
+.export-item-body {
+  font-size: 14px;
+  color: #1d1d1f;
+  line-height: 1.5;
+}
+
+/* ===== 导出区块（课后记录用） ===== */
+.export-section {
+  margin-bottom: 16px;
+}
+
+.export-section:last-child {
+  margin-bottom: 0;
+}
+
+.export-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #515154;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f0f0f2;
+}
+
+.export-section-body {
+  font-size: 13px;
+  color: #1d1d1f;
+  line-height: 1.6;
+}
+
+.export-section-body.pre-line {
+  white-space: pre-line;
+}
+
+/* ===== 大纲导出样式 ===== */
+.export-outline {
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.export-outline-line {
+  color: #1d1d1f;
+  margin-bottom: 2px;
+}
+
+.export-outline-num {
+  color: #86868b;
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+
+/* ===== 结课总结列表 ===== */
+.export-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-summary-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  flex-wrap: wrap;
+}
+
+.export-summary-label {
+  font-weight: 600;
+  color: #1d1d1f;
+  white-space: nowrap;
+}
+
+.export-summary-date {
+  color: #86868b;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.export-summary-content {
+  color: #1d1d1f;
+  flex: 1;
+}
+
+.export-summary-status {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.export-message {
+  font-size: 13px;
+  color: #1d1d1f;
+  line-height: 1.7;
+  padding: 10px 12px;
+  background: #f9f9fb;
+  border-radius: 8px;
+  border-left: 3px solid #007aff;
+}
+
+.export-empty-line {
+  font-size: 13px;
+  color: #c7c7cc;
+  font-style: italic;
+}
+
+.export-empty {
+  text-align: center;
+  color: #c7c7cc;
+  font-size: 13px;
+  padding: 20px;
 }
