@@ -19,12 +19,13 @@ function selectStudent(id) {
   currentStudent = id;
   renderStudentChips();
   renderPlanTable();
+  updatePlanExportPreview();
   clearRecordForm();
   editingOutline = [];
   renderOutlineEditor();
   renderHistory();
-  updateExportOptions();
-  updateExportPreview();
+  updateRecordExportOptions();
+  updateRecordExportPreview();
   persist();
 }
 

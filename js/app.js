@@ -1,6 +1,5 @@
 /* ===== 应用初始化 & 全局状态 ===== */
 
-// 全局状态
 let students = [];
 let studentData = {};
 let currentStudent = null;
@@ -8,7 +7,6 @@ let editingOutline = [];
 let nextStudentId = 1;
 let nextNodeId = 1;
 
-// 初始化
 document.addEventListener('DOMContentLoaded', function() {
   initData();
   initTabs();
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// 加载数据
 function initData() {
   const data = loadAllData();
   students = data.students || [];
@@ -29,7 +26,6 @@ function initData() {
   nextNodeId = data.nextNodeId || 1;
 }
 
-// 持久化
 function persist() {
   saveAllData({
     students,
@@ -39,7 +35,6 @@ function persist() {
   });
 }
 
-// Tab 切换
 function initTabs() {
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', function() {
@@ -48,20 +43,18 @@ function initTabs() {
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       this.classList.add('active');
       document.getElementById('panel-' + target).classList.add('active');
-      if (target === 'export') updateExportPreview();
     });
   });
 }
 
-// 空状态
 function renderEmptyState() {
-  document.getElementById('planBody').innerHTML = '<tr><td colspan="4" class="empty-state">请先点击右上角「+ 添加学生」</td></tr>';
+  document.getElementById('planBody').innerHTML = '<tr><td colspan="5" class="empty-state">请先点击右上角「+ 添加学生」</td></tr>';
   document.getElementById('historyList').innerHTML = '<div class="empty-state">请先添加学生</div>';
-  document.getElementById('exportPreview').textContent = '请先添加学生';
+  document.getElementById('planExportPreview').textContent = '请先添加学生';
+  document.getElementById('recordExportPreview').textContent = '请先添加学生';
   document.getElementById('outlineEditor').innerHTML = '<div class="empty-state">请先添加学生</div>';
 }
 
-// 导出/导入按钮（可在页面底部添加）
 function createBackupButtons() {
   const app = document.getElementById('app');
   const div = document.createElement('div');
@@ -90,7 +83,6 @@ function handleImport(input) {
   });
 }
 
-// 页面加载完成后添加备份按钮
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(createBackupButtons, 100);
 });

@@ -20,7 +20,8 @@ function saveRecord() {
   };
   studentData[currentStudent].records.unshift(record);
   renderHistory();
-  updateExportOptions();
+  updateRecordExportOptions();
+  updateRecordExportPreview();
   persist();
   alert('课后记录已保存！');
 }
