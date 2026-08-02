@@ -18,38 +18,29 @@ function updatePlanExportPreview() {
   // 纯文本版（用于复制）
   const textLines = plans.map(p => {
     const dateStr = p.date ? formatDateCN(p.date) : '待定';
-    return `第${p.num}次课  ·  ${dateStr}
-${p.content || '（未填写）'}`;
+    return '第' + p.num + '次课  ·  ' + dateStr + '\n' + (p.content || '（未填写）');
   });
-  const plainText = `📋 ${s.name} 课程计划
-
-${textLines.join('
-
-')}`;
+  const plainText = '📋 ' + s.name + ' 课程计划\n\n' + textLines.join('\n\n');
 
   // HTML版（用于截图）
   const htmlItems = plans.map(p => {
     const dateStr = p.date ? formatDateCN(p.date) : '待定';
-    return `
-      <div class="export-item">
-        <div class="export-item-header">
-          <span class="export-badge">第${p.num}次课</span>
-          <span class="export-date">${dateStr}</span>
-        </div>
-        <div class="export-item-body">${escapeHtml(p.content) || '（未填写）'}</div>
-      </div>
-    `;
+    return '<div class="export-item">'
+      + '<div class="export-item-header">'
+      + '<span class="export-badge">第' + p.num + '次课</span>'
+      + '<span class="export-date">' + escapeHtml(dateStr) + '</span>'
+      + '</div>'
+      + '<div class="export-item-body">' + escapeHtml(p.content || '（未填写）') + '</div>'
+      + '</div>';
   }).join('');
 
-  preview.innerHTML = `
-    <div class="export-card-inner">
-      <div class="export-header">
-        <div class="export-title">📋 ${escapeHtml(s.name)} 课程计划</div>
-        <div class="export-subtitle">${escapeHtml(s.grade)} · ${escapeHtml(s.subject)}</div>
-      </div>
-      <div class="export-body">${htmlItems}</div>
-    </div>
-  `;
+  preview.innerHTML = '<div class="export-card-inner">'
+    + '<div class="export-header">'
+    + '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课程计划</div>'
+    + '<div class="export-subtitle">' + escapeHtml(s.grade) + ' · ' + escapeHtml(s.subject) + '</div>'
+    + '</div>'
+    + '<div class="export-body">' + htmlItems + '</div>'
+    + '</div>';
   preview.dataset.plainText = plainText;
 }
 
@@ -60,7 +51,7 @@ function copyPlanExport() {
 }
 
 function downloadPlanImage() {
-  downloadElementImage('planExportPreview', `课程计划_${getCurrentStudent()?.name || '学生'}`);
+  downloadElementImage('planExportPreview', '课程计划_' + (getCurrentStudent() ? getCurrentStudent().name : '学生'));
 }
 
 // ========== 课后记录导出 ==========
@@ -78,7 +69,7 @@ function updateRecordExportOptions() {
   }
   select.innerHTML = records.map((r, i) => {
     const title = r.outline && r.outline[0] ? r.outline[0].text : '无主题';
-    return `<option value="${i}">${r.date || '未设置'} - ${escapeHtml(title)}</option>`;
+    return '<option value="' + i + '">' + (r.date || '未设置') + ' - ' + escapeHtml(title) + '</option>';
   }).join('');
 }
 
@@ -106,55 +97,44 @@ function updateRecordExportPreview() {
 
   // 纯文本版
   const dateStr = r.date ? formatDateCN(r.date) : '—';
-  const plainText = `📋 ${s.name} 课后反馈
-
-📅 ${dateStr}  ·  ${r.status || '—'}
-
-📖 本课内容
-${outlineText}
-
-💡 表现评价
-${r.performance || '—'}
-
-📝 作业布置
-${r.homework || '—'}
-
-💬 家长反馈
-${r.feedback || '—'}`;
+  const plainText = '📋 ' + s.name + ' 课后反馈\n\n'
+    + '📅 ' + dateStr + '  ·  ' + (r.status || '—') + '\n\n'
+    + '📖 本课内容\n' + outlineText + '\n\n'
+    + '💡 表现评价\n' + (r.performance || '—') + '\n\n'
+    + '📝 作业布置\n' + (r.homework || '—') + '\n\n'
+    + '💬 家长反馈\n' + (r.feedback || '—');
 
   // HTML版
   const statusColor = getStatusColorHex(r.status);
   const outlineHtml = r.outline && r.outline.length > 0
-    ? `<div class="export-outline">${renderOutlineHtml(r.outline, 0, '')}</div>`
+    ? '<div class="export-outline">' + renderOutlineHtml(r.outline, 0, '') + '</div>'
     : '<div class="export-empty-line">（暂无内容）</div>';
 
-  preview.innerHTML = `
-    <div class="export-card-inner">
-      <div class="export-header">
-        <div class="export-title">📋 ${escapeHtml(s.name)} 课后反馈</div>
-        <div class="export-meta">
-          <span class="export-meta-date">📅 ${dateStr}</span>
-          <span class="export-meta-status" style="color:${statusColor}">${r.status || '—'}</span>
-        </div>
-      </div>
-      <div class="export-section">
-        <div class="export-section-title">📖 本课内容</div>
-        ${outlineHtml}
-      </div>
-      <div class="export-section">
-        <div class="export-section-title">💡 表现评价</div>
-        <div class="export-section-body">${escapeHtml(r.performance) || '—'}</div>
-      </div>
-      <div class="export-section">
-        <div class="export-section-title">📝 作业布置</div>
-        <div class="export-section-body pre-line">${escapeHtml(r.homework) || '—'}</div>
-      </div>
-      <div class="export-section">
-        <div class="export-section-title">💬 家长反馈</div>
-        <div class="export-section-body pre-line">${escapeHtml(r.feedback) || '—'}</div>
-      </div>
-    </div>
-  `;
+  preview.innerHTML = '<div class="export-card-inner">'
+    + '<div class="export-header">'
+    + '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课后反馈</div>'
+    + '<div class="export-meta">'
+    + '<span class="export-meta-date">📅 ' + dateStr + '</span>'
+    + '<span class="export-meta-status" style="color:' + statusColor + '">' + (r.status || '—') + '</span>'
+    + '</div>'
+    + '</div>'
+    + '<div class="export-section">'
+    + '<div class="export-section-title">📖 本课内容</div>'
+    + outlineHtml
+    + '</div>'
+    + '<div class="export-section">'
+    + '<div class="export-section-title">💡 表现评价</div>'
+    + '<div class="export-section-body">' + escapeHtml(r.performance || '—') + '</div>'
+    + '</div>'
+    + '<div class="export-section">'
+    + '<div class="export-section-title">📝 作业布置</div>'
+    + '<div class="export-section-body pre-line">' + escapeHtml(r.homework || '—') + '</div>'
+    + '</div>'
+    + '<div class="export-section">'
+    + '<div class="export-section-title">💬 家长反馈</div>'
+    + '<div class="export-section-body pre-line">' + escapeHtml(r.feedback || '—') + '</div>'
+    + '</div>'
+    + '</div>';
   preview.dataset.plainText = plainText;
 }
 
@@ -165,7 +145,7 @@ function copyRecordExport() {
 }
 
 function downloadRecordImage() {
-  downloadElementImage('recordExportPreview', `课后反馈_${getCurrentStudent()?.name || '学生'}`);
+  downloadElementImage('recordExportPreview', '课后反馈_' + (getCurrentStudent() ? getCurrentStudent().name : '学生'));
 }
 
 // ========== 通用工具 ==========
@@ -205,7 +185,7 @@ function formatDateCN(dateStr) {
   const m = d.getMonth() + 1;
   const day = d.getDate();
   const week = ['日','一','二','三','四','五','六'][d.getDay()];
-  return `${m}月${day}日 周${week}`;
+  return m + '月' + day + '日 周' + week;
 }
 
 function getStatusColorHex(status) {
@@ -222,7 +202,9 @@ function renderOutlineHtml(nodes, level, prefix) {
     let bullet = '';
     if (level === 0) bullet = (idx + 1) + '.';
     else bullet = prefix + '.' + (idx + 1);
-    html += `<div class="export-outline-line" style="padding-left:${level * 16}px"><span class="export-outline-num">${bullet}</span> ${escapeHtml(node.text)}</div>`;
+    html += '<div class="export-outline-line" style="padding-left:' + (level * 16) + 'px">'
+      + '<span class="export-outline-num">' + bullet + '</span> ' + escapeHtml(node.text)
+      + '</div>';
     if (node.children && node.children.length > 0) {
       html += renderOutlineHtml(node.children, level + 1, bullet);
     }
@@ -241,7 +223,7 @@ function downloadElementImage(elementId, filenamePrefix) {
       logging: false
     }).then(canvas => {
       const link = document.createElement('a');
-      link.download = `${filenamePrefix}_${date}.png`;
+      link.download = filenamePrefix + '_' + date + '.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
