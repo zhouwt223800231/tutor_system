@@ -896,26 +896,19 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
   padding: 20px;
 }
 
+
 /* ============================================================
- * v4.0 新增样式：阶段管理 / 学生编辑 / 反馈覆盖 / 云端同步
+ * v4.0 新增样式：阶段管理 / 学生编辑 / 反馈覆盖 / 本地模式
  * ============================================================ */
 
-/* ===== 头部右侧（版本 + 云端状态） ===== */
+/* ===== 头部右侧（版本 + 本地模式提示） ===== */
 .header-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4px;
 }
-#cloudArea {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  max-width: 300px;
-}
-.cloud-badge {
+.local-note {
   font-size: 11px;
   color: #86868b;
   background: #f0f0f2;
@@ -924,10 +917,6 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
   padding: 2px 8px;
   white-space: nowrap;
 }
-.cloud-user { font-size: 12px; color: #515154; white-space: nowrap; }
-.cloud-status { font-size: 11px; color: #34c759; white-space: nowrap; }
-.cloud-status.cloud-err, .cloud-err { color: #ff3b30; }
-.cloud-btn { padding: 2px 8px; font-size: 11px; border-radius: 6px; }
 
 /* ===== 阶段栏 ===== */
 .stage-bar {
@@ -1096,11 +1085,6 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
 .manage-stage-name:focus { outline: none; border-color: #007aff; }
 .manage-stage-meta { font-size: 12px; color: #86868b; margin-top: 4px; }
 .manage-stage-ops { display: flex; gap: 6px; align-items: center; }
-
-/* ===== 云端账号弹窗 ===== */
-.cloud-auth-tabs { display: flex; gap: 6px; }
-.cloud-auth-tab.active { background: #1d1d1f; color: #fff; border-color: #1d1d1f; }
-.cloud-error { color: #ff3b30; font-size: 12px; min-height: 18px; margin-bottom: 8px; }
 
 /* ===== 移动端适配 ===== */
 @media (max-width: 560px) {

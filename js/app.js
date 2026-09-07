@@ -11,7 +11,6 @@ let nextNodeId = 1;
 document.addEventListener('DOMContentLoaded', function () {
   initData();
   initTabs();
-  initCloud();               // 云端同步初始化（未配置时自动进入本地模式）
   renderStudentChips();
   if (students.length > 0) {
     selectStudent(students[0].id);
@@ -40,8 +39,6 @@ function buildDataSnapshot() {
 
 function persist() {
   saveAllData(buildDataSnapshot());
-  markLocalChange();
-  queueCloudSync();          // 未配置/未登录时自动忽略
 }
 
 function initTabs() {

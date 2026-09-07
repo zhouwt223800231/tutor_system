@@ -1,7 +1,6 @@
 /* ===== 数据持久化层（v4.0：按“阶段/学期”组织） ===== */
 
 const STORAGE_KEY = 'tutor_system_data';
-const STORAGE_META = 'tutor_system_meta';   // 记录本机最后一次修改时间（云端冲突判断用）
 
 // 生成稳定、唯一的 ID
 function uid(prefix) {
@@ -158,14 +157,6 @@ function saveAllData(data) {
   }
 }
 
-// 记录本机修改时间（云端冲突判断用）
-function markLocalChange() {
-  try { localStorage.setItem(STORAGE_META, String(Date.now())); } catch (e) {}
-}
-
-function getLocalChangeTime() {
-  try { return Number(localStorage.getItem(STORAGE_META)) || 0; } catch (e) { return 0; }
-}
 
 // 导出 JSON 备份
 function exportBackup() {
