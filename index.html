@@ -10,12 +10,24 @@
   <div id="app">
     <div class="header">
       <h2>📚 家教课程管理系统</h2>
-      <span class="version">v3.1</span>
+      <div class="header-right">
+        <span class="version">v4.0</span>
+        <div id="cloudArea"></div>
+      </div>
     </div>
 
+    <!-- 学生栏 -->
     <div class="student-bar">
       <div class="student-select" id="studentChips"></div>
       <button class="add-student-btn" onclick="openAddStudent()">+ 添加学生</button>
+    </div>
+
+    <!-- 阶段（学期）栏 -->
+    <div class="stage-bar" id="stageBar">
+      <span class="stage-label">阶段</span>
+      <div class="stage-select" id="stageChips"></div>
+      <button class="add-stage-btn" onclick="openAddStage()">＋ 添加阶段</button>
+      <button class="btn btn-sm" id="manageStagesBtn" onclick="openManageStages()" style="display:none;">管理</button>
     </div>
 
     <div class="tabs">
@@ -28,7 +40,7 @@
     <div class="panel active" id="panel-before">
       <div class="card">
         <div class="card-title">📋 课程安排表</div>
-        <div class="plan-hint">💡 拖拽 ⋮⋮ 可调整顺序，hover 行可插入新课程</div>
+        <div class="plan-hint">💡 拖拽 ⋮⋮ 可调整顺序，hover 行可插入新课程；每行可「移到」其他阶段</div>
         <table class="plan-table" id="planTable">
           <thead>
             <tr>
@@ -58,8 +70,14 @@
     <!-- ========== 课后记录 ========== -->
     <div class="panel" id="panel-after">
       <div class="card">
-        <div class="card-title">📅 上课日期</div>
+        <div class="card-title">📅 上课日期
+          <button class="btn btn-sm" style="margin-left:auto;" onclick="resetToNewRecord()" title="清空表单，开始录入一条新反馈">＋ 新建反馈</button>
+        </div>
         <input type="date" id="recordDate" class="date-input" />
+        <div class="edit-banner" id="editBanner" style="display:none;">
+          <span id="editBannerText"></span>
+          <button class="btn btn-sm" onclick="cancelEditing()">取消编辑</button>
+        </div>
       </div>
 
       <div class="card">
@@ -95,7 +113,7 @@
       <button class="btn btn-primary save-btn" onclick="saveRecord()">保存课后记录</button>
 
       <div class="history-section">
-        <div class="card-title">📂 历史记录（点击可查看/编辑）</div>
+        <div class="card-title">📂 历史记录（点击可编辑，保存将覆盖原记录）</div>
         <div class="history-list" id="historyList"></div>
       </div>
 
@@ -116,27 +134,23 @@
 
     <!-- ========== 结课总结 ========== -->
     <div class="panel" id="panel-summary">
-      <!-- 课程时间线 -->
       <div class="card">
         <div class="card-title">📅 课程时间线</div>
-        <div class="section-label">自动汇总课前计划中的课程安排</div>
+        <div class="section-label">自动汇总当前阶段课前计划中的课程安排</div>
         <div class="timeline" id="summaryTimeline"></div>
       </div>
 
-      <!-- 课后记录概要 -->
       <div class="card">
         <div class="card-title">📖 课后记录概要</div>
-        <div class="section-label">自动汇总每次上课的日期、内容和状态</div>
+        <div class="section-label">自动汇总当前阶段每次上课的日期、内容和状态</div>
         <div class="record-summary" id="summaryRecords"></div>
       </div>
 
-      <!-- 总结寄语 -->
       <div class="card">
         <div class="card-title">✨ 总结寄语</div>
-        <textarea id="summaryMessage" placeholder="写下对学生的学习总结、鼓励寄语或后续建议..." style="min-height: 100px;"></textarea>
+        <textarea id="summaryMessage" placeholder="写下本阶段对学生的学习总结、鼓励寄语或后续建议..." style="min-height: 100px;"></textarea>
       </div>
 
-      <!-- 结课总结导出预览 -->
       <div class="card export-card">
         <div class="card-title">📤 结课总结导出预览</div>
         <div class="export-preview wechat-style" id="summaryExportPreview"></div>
@@ -159,31 +173,17 @@
       <div class="modal-field">
         <label>年级</label>
         <select id="newStudentGrade">
-          <option>小学三年级</option>
-          <option>小学四年级</option>
-          <option>小学五年级</option>
-          <option>小学六年级</option>
-          <option>初一</option>
-          <option>初二</option>
-          <option>初三</option>
-          <option>高一</option>
-          <option>高二</option>
-          <option>高三</option>
+          <option>小学三年级</option><option>小学四年级</option><option>小学五年级</option><option>小学六年级</option>
+          <option>初一</option><option>初二</option><option>初三</option>
+          <option>高一</option><option>高二</option><option>高三</option>
         </select>
       </div>
       <div class="modal-field">
         <label>科目</label>
         <select id="newStudentSubject">
-          <option>数学</option>
-          <option>语文</option>
-          <option>英语</option>
-          <option>物理</option>
-          <option>化学</option>
-          <option>生物</option>
-          <option>历史</option>
-          <option>地理</option>
-          <option>政治</option>
-          <option>其他</option>
+          <option>数学</option><option>语文</option><option>英语</option><option>物理</option>
+          <option>化学</option><option>生物</option><option>历史</option><option>地理</option>
+          <option>政治</option><option>其他</option>
         </select>
       </div>
       <div class="modal-actions">
@@ -193,15 +193,110 @@
     </div>
   </div>
 
+  <!-- 编辑学生信息弹窗 -->
+  <div class="modal-overlay" id="editStudentModal">
+    <div class="modal-box">
+      <h3>✏️ 编辑学生信息</h3>
+      <div class="modal-field">
+        <label>学生姓名</label>
+        <input type="text" id="editStudentName" placeholder="例如：小明" />
+      </div>
+      <div class="modal-field">
+        <label>年级</label>
+        <select id="editStudentGrade">
+          <option>小学三年级</option><option>小学四年级</option><option>小学五年级</option><option>小学六年级</option>
+          <option>初一</option><option>初二</option><option>初三</option>
+          <option>高一</option><option>高二</option><option>高三</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>科目</label>
+        <select id="editStudentSubject">
+          <option>数学</option><option>语文</option><option>英语</option><option>物理</option>
+          <option>化学</option><option>生物</option><option>历史</option><option>地理</option>
+          <option>政治</option><option>其他</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeEditStudent()">取消</button>
+        <button class="btn btn-primary" onclick="confirmEditStudent()">保存修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加阶段弹窗 -->
+  <div class="modal-overlay" id="addStageModal">
+    <div class="modal-box">
+      <h3>📌 添加阶段 / 学期</h3>
+      <div class="modal-field">
+        <label>阶段名称</label>
+        <input type="text" id="newStageName" placeholder="例如：2026 暑假课程" />
+        <div class="stage-template-hint">快捷模板：</div>
+        <div class="stage-template-row">
+          <button class="btn btn-sm" onclick="fillStageTemplate('暑假课程')">暑假课程</button>
+          <button class="btn btn-sm" onclick="fillStageTemplate('秋季学期')">秋季学期</button>
+          <button class="btn btn-sm" onclick="fillStageTemplate('寒假课程')">寒假课程</button>
+          <button class="btn btn-sm" onclick="fillStageTemplate('春季学期')">春季学期</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeAddStage()">取消</button>
+        <button class="btn btn-primary" onclick="confirmAddStage()">确认添加</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 管理阶段弹窗 -->
+  <div class="modal-overlay" id="manageStagesModal">
+    <div class="modal-box">
+      <h3>🗂 管理阶段（改名 / 排序 / 删除）</h3>
+      <div class="manage-stages-list" id="manageStagesList"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="closeManageStages()">完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 云端账号弹窗 -->
+  <div class="modal-overlay" id="cloudAuthModal">
+    <div class="modal-box">
+      <h3>☁️ 云端账号（多设备同步）</h3>
+      <div class="cloud-auth-tabs">
+        <button class="btn btn-sm cloud-auth-tab active" id="cloudTabLogin" onclick="setCloudAuthMode('login')">登录</button>
+        <button class="btn btn-sm cloud-auth-tab" id="cloudTabReg" onclick="setCloudAuthMode('register')">注册</button>
+      </div>
+      <div class="modal-field" style="margin-top:12px;">
+        <label>用户名</label>
+        <input type="text" id="cloudUsername" placeholder="自定义用户名" />
+      </div>
+      <div class="modal-field">
+        <label>密码</label>
+        <input type="password" id="cloudPassword" placeholder="至少 6 位" />
+      </div>
+      <div class="modal-field" id="cloudPwd2Wrap" style="display:none;">
+        <label>确认密码</label>
+        <input type="password" id="cloudPassword2" placeholder="再次输入密码" />
+      </div>
+      <div class="cloud-error" id="cloudError"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeCloudAuth()">取消</button>
+        <button class="btn btn-primary" id="cloudAuthSubmit" onclick="submitCloudAuth()">登录</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/cloud.js"></script>
   <script src="js/studentManager.js"></script>
+  <script src="js/stageManager.js"></script>
   <script src="js/planTable.js"></script>
   <script src="js/outlineEditor.js"></script>
   <script src="js/recordManager.js"></script>
   <script src="js/summary.js"></script>
   <script src="js/export.js"></script>
   <script src="js/app.js"></script>
-  <script src="lib/html2canvas.min.js"></script> 
-
+  <script src="lib/leancloud-storage.min.js"></script>
+  <script src="lib/html2canvas.min.js"></script>
 </body>
 </html>

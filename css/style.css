@@ -895,3 +895,215 @@ textarea:focus { outline: none; border-color: #1d1d1f; }
   font-size: 13px;
   padding: 20px;
 }
+
+/* ============================================================
+ * v4.0 新增样式：阶段管理 / 学生编辑 / 反馈覆盖 / 云端同步
+ * ============================================================ */
+
+/* ===== 头部右侧（版本 + 云端状态） ===== */
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+#cloudArea {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  max-width: 300px;
+}
+.cloud-badge {
+  font-size: 11px;
+  color: #86868b;
+  background: #f0f0f2;
+  border: 1px solid #e5e5ea;
+  border-radius: 10px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.cloud-user { font-size: 12px; color: #515154; white-space: nowrap; }
+.cloud-status { font-size: 11px; color: #34c759; white-space: nowrap; }
+.cloud-status.cloud-err, .cloud-err { color: #ff3b30; }
+.cloud-btn { padding: 2px 8px; font-size: 11px; border-radius: 6px; }
+
+/* ===== 阶段栏 ===== */
+.stage-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: #fff;
+  border: 1px solid #e5e5ea;
+  border-radius: 12px;
+}
+.stage-label {
+  font-size: 12px;
+  color: #86868b;
+  white-space: nowrap;
+}
+.stage-select {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+}
+.stage-chip {
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 1px solid #d2d2d7;
+  background: #fafafa;
+  cursor: pointer;
+  font-size: 13px;
+  color: #515154;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+.stage-chip:hover { border-color: #007aff; color: #007aff; }
+.stage-chip.active {
+  background: #007aff;
+  border-color: #007aff;
+  color: #fff;
+  font-weight: 500;
+}
+.stage-empty { font-size: 13px; color: #c7c7cc; }
+.add-stage-btn {
+  padding: 4px 12px;
+  border-radius: 16px;
+  border: 1px dashed #c7c7cc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #86868b;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.add-stage-btn:hover { border-color: #007aff; color: #007aff; }
+
+/* ===== 学生卡片上的编辑按钮 ===== */
+.student-chip .edit-btn {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 2px;
+  color: #ff9500;
+}
+.student-chip:hover .edit-btn { opacity: 1; }
+.student-chip.active .edit-btn { color: #ffd60a; }
+
+/* ===== 课程计划：操作列变宽、支持“移到” ===== */
+.plan-table .action-col { width: 120px; text-align: center; }
+.plan-table .action-col .row-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  opacity: 0;
+}
+.plan-table tr:hover .action-col .row-actions { opacity: 1; }
+.move-select {
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  border: 1px solid #d2d2d7;
+  background: #fff;
+  color: #515154;
+  font-family: inherit;
+  max-width: 96px;
+}
+
+/* ===== 历史记录：正文可点击 + 右侧操作 ===== */
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+.history-item .history-body { flex: 1; min-width: 0; cursor: pointer; }
+.history-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.history-item .history-status { font-size: 12px; font-weight: 500; }
+.history-editing-badge {
+  font-size: 11px;
+  color: #b45309;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  padding: 0 6px;
+  border-radius: 8px;
+}
+.history-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.history-item:hover .history-actions { opacity: 1; }
+
+/* ===== 编辑态提示条 ===== */
+.edit-banner {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #eaf4ff;
+  border: 1px solid #bcd9ff;
+  color: #1d63c0;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+.edit-banner span { flex: 1; min-width: 0; }
+
+/* ===== 添加阶段弹窗 ===== */
+.stage-template-hint { font-size: 12px; color: #86868b; margin: 8px 0 4px; }
+.stage-template-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ===== 管理阶段弹窗 ===== */
+.manage-stages-list { max-height: 320px; overflow-y: auto; }
+.manage-stage-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #fafafa;
+}
+.manage-stage-main { flex: 1; min-width: 0; }
+.manage-stage-name {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #d2d2d7;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #fff;
+}
+.manage-stage-name:focus { outline: none; border-color: #007aff; }
+.manage-stage-meta { font-size: 12px; color: #86868b; margin-top: 4px; }
+.manage-stage-ops { display: flex; gap: 6px; align-items: center; }
+
+/* ===== 云端账号弹窗 ===== */
+.cloud-auth-tabs { display: flex; gap: 6px; }
+.cloud-auth-tab.active { background: #1d1d1f; color: #fff; border-color: #1d1d1f; }
+.cloud-error { color: #ff3b30; font-size: 12px; min-height: 18px; margin-bottom: 8px; }
+
+/* ===== 移动端适配 ===== */
+@media (max-width: 560px) {
+  .plan-table .action-col { width: 96px; }
+  .header-right { align-items: flex-end; }
+}

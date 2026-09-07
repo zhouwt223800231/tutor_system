@@ -1,25 +1,41 @@
-/* ===== 层级大纲编辑器 ===== */
+/* ===== 层级大纲编辑器（v4.0） ===== */
+
+// 大纲草稿策略：
+// - 新建记录时，大纲只保留在内存 editingOutline，点“保存”后才写入记录；
+// - 编辑已有记录时，每次修改大纲即时写回该记录（并触发持久化/同步）。
+function persistOutlineDraft() {
+  if (!currentStudent) return;
+  const stage = getCurrentStageObj();
+  if (!stage) return;
+  if (editingRecordId) {
+    const rec = stage.records.find(function (r) { return r.id === editingRecordId; });
+    if (rec) {
+      rec.outline = JSON.parse(JSON.stringify(editingOutline));
+      rec.updatedAt = nowISO();
+      persist();
+    }
+  }
+}
 
 // 渲染大纲树
 function renderOutline(nodes, level, prefix) {
   let html = '';
   function walk(nodes, level, prefix) {
-    nodes.forEach((node, idx) => {
+    nodes.forEach(function (node, idx) {
       let bullet = '';
       if (level === 0) bullet = (idx + 1) + '';
       else bullet = prefix + '.' + (idx + 1);
-      html += `
-        <div class="outline-node outline-level-${Math.min(level, 3)}" data-id="${node.id}">
-          <span class="bullet">${bullet}</span>
-          <input type="text" class="node-input" value="${escapeHtml(node.text)}"
-                 onchange="updateNodeText('${node.id}', this.value)"
-                 placeholder="输入内容..." />
-          <div class="node-actions">
-            <button class="btn btn-sm btn-icon" onclick="addChildNode('${node.id}')" title="添加子项">⊕</button>
-            <button class="btn btn-sm btn-icon" onclick="deleteNode('${node.id}')" title="删除">✕</button>
-          </div>
-        </div>
-      `;
+      html +=
+        '<div class="outline-node outline-level-' + Math.min(level, 3) + '" data-id="' + node.id + '">' +
+        '<span class="bullet">' + bullet + '</span>' +
+        '<input type="text" class="node-input" value="' + escapeHtml(node.text).replace(/"/g, '&quot;') + '"' +
+        ' onchange="updateNodeText(\'' + node.id + '\', this.value)"' +
+        ' placeholder="输入内容..." />' +
+        '<div class="node-actions">' +
+        '<button class="btn btn-sm btn-icon" onclick="addChildNode(\'' + node.id + '\')" title="添加子项">⊕</button>' +
+        '<button class="btn btn-sm btn-icon" onclick="deleteNode(\'' + node.id + '\')" title="删除">✕</button>' +
+        '</div>' +
+        '</div>';
       if (node.children && node.children.length > 0) {
         walk(node.children, level + 1, bullet);
       }
@@ -31,6 +47,7 @@ function renderOutline(nodes, level, prefix) {
 
 function renderOutlineEditor() {
   const container = document.getElementById('outlineEditor');
+  if (!container) return;
   if (editingOutline.length === 0) {
     container.innerHTML = '<div class="empty-state">点击上方按钮添加一级主题</div>';
     return;
@@ -54,7 +71,7 @@ function updateNodeText(id, text) {
   const found = findNodeParent(editingOutline, id);
   if (found) {
     found.node.text = text;
-    persist();
+    persistOutlineDraft();
   }
 }
 
@@ -70,13 +87,13 @@ function addChildNode(parentId) {
       children: []
     });
     renderOutlineEditor();
-    persist();
+    persistOutlineDraft();
   }
 }
 
 function deleteNode(id) {
   function removeFrom(nodes) {
-    const idx = nodes.findIndex(n => n.id === id);
+    const idx = nodes.findIndex(function (n) { return n.id === id; });
     if (idx >= 0) {
       nodes.splice(idx, 1);
       return true;
@@ -90,12 +107,13 @@ function deleteNode(id) {
   }
   if (removeFrom(editingOutline)) {
     renderOutlineEditor();
-    persist();
+    persistOutlineDraft();
   }
 }
 
 function addTopLevelNode() {
   if (!currentStudent) { alert('请先添加学生'); return; }
+  if (!getCurrentStageObj()) { alert('请先为该学生添加阶段'); return; }
   editingOutline.push({
     id: 'n' + (nextNodeId++),
     text: '',
@@ -103,19 +121,18 @@ function addTopLevelNode() {
     children: []
   });
   renderOutlineEditor();
-  persist();
+  persistOutlineDraft();
 }
 
 // 将大纲序列化为纯文本（用于导出）
 function serializeOutline(nodes, level, prefix) {
   let text = '';
-  nodes.forEach((node, idx) => {
+  nodes.forEach(function (node, idx) {
     let bullet = '';
     if (level === 0) bullet = (idx + 1) + '.';
     else bullet = prefix + '.' + (idx + 1);
     const indent = '  '.repeat(level);
-    text += `${indent}${bullet} ${node.text}
-`;
+    text += indent + bullet + ' ' + node.text + '\n';
     if (node.children && node.children.length > 0) {
       text += serializeOutline(node.children, level + 1, bullet);
     }

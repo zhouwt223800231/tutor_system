@@ -1,46 +1,47 @@
-/* ===== 导出功能（嵌入课前计划 & 课后记录面板） ===== */
+/* ===== 导出功能（v4.0：按当前学生 + 当前阶段导出） ===== */
 
 // ========== 课前计划导出 ==========
 
 function updatePlanExportPreview() {
   const preview = document.getElementById('planExportPreview');
   const s = getCurrentStudent();
-  if (!s) {
-    preview.innerHTML = '<div class="export-empty">请先添加学生</div>';
+  const stage = getCurrentStageObj();
+  if (!s || !stage) {
+    preview.innerHTML = '<div class="export-empty">请先选择学生与阶段</div>';
     return;
   }
-  const plans = studentData[currentStudent].plans;
-  if (!plans || plans.length === 0) {
+  const plans = stage.plans || [];
+  if (plans.length === 0) {
     preview.innerHTML = '<div class="export-empty">暂无课程计划</div>';
     return;
   }
 
   // 纯文本版（用于复制）
-  const textLines = plans.map(p => {
+  const textLines = plans.map(function (p) {
     const dateStr = p.date ? formatDateCN(p.date) : '待定';
     return '第' + p.num + '次课  ·  ' + dateStr + '\n' + (p.content || '（未填写）');
   });
-  const plainText = '📋 ' + s.name + ' 课程计划\n\n' + textLines.join('\n\n');
+  const plainText = '📋 ' + s.name + ' · ' + stage.name + ' 课程计划\n\n' + textLines.join('\n\n');
 
   // HTML版（用于截图）
-  const htmlItems = plans.map(p => {
+  const htmlItems = plans.map(function (p) {
     const dateStr = p.date ? formatDateCN(p.date) : '待定';
-    return '<div class="export-item">'
-      + '<div class="export-item-header">'
-      + '<span class="export-badge">第' + p.num + '次课</span>'
-      + '<span class="export-date">' + escapeHtml(dateStr) + '</span>'
-      + '</div>'
-      + '<div class="export-item-body">' + escapeHtml(p.content || '（未填写）') + '</div>'
-      + '</div>';
+    return '<div class="export-item">' +
+      '<div class="export-item-header">' +
+      '<span class="export-badge">第' + p.num + '次课</span>' +
+      '<span class="export-date">' + escapeHtml(dateStr) + '</span>' +
+      '</div>' +
+      '<div class="export-item-body">' + escapeHtml(p.content || '（未填写）') + '</div>' +
+      '</div>';
   }).join('');
 
-  preview.innerHTML = '<div class="export-card-inner">'
-    + '<div class="export-header">'
-    + '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课程计划</div>'
-    + '<div class="export-subtitle">' + escapeHtml(s.grade) + ' · ' + escapeHtml(s.subject) + '</div>'
-    + '</div>'
-    + '<div class="export-body">' + htmlItems + '</div>'
-    + '</div>';
+  preview.innerHTML = '<div class="export-card-inner">' +
+    '<div class="export-header">' +
+    '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课程计划</div>' +
+    '<div class="export-subtitle">' + escapeHtml(stage.name) + ' · ' + escapeHtml(s.grade) + ' · ' + escapeHtml(s.subject) + '</div>' +
+    '</div>' +
+    '<div class="export-body">' + htmlItems + '</div>' +
+    '</div>';
   preview.dataset.plainText = plainText;
 }
 
@@ -51,25 +52,31 @@ function copyPlanExport() {
 }
 
 function downloadPlanImage() {
-  downloadElementImage('planExportPreview', '课程计划_' + (getCurrentStudent() ? getCurrentStudent().name : '学生'));
+  const s = getCurrentStudent();
+  const stage = getCurrentStageObj();
+  let prefix = '课程计划_' + (s ? s.name : '学生');
+  if (stage) prefix += '_' + stage.name;
+  downloadElementImage('planExportPreview', prefix);
 }
 
 // ========== 课后记录导出 ==========
 
 function updateRecordExportOptions() {
   const select = document.getElementById('exRecord');
-  if (!currentStudent) {
-    select.innerHTML = '<option>无记录</option>';
+  if (!select) return;
+  const stage = getCurrentStageObj();
+  if (!currentStudent || !stage) {
+    select.innerHTML = '<option>请先选择阶段</option>';
     return;
   }
-  const records = studentData[currentStudent].records;
+  const records = stage.records;
   if (records.length === 0) {
     select.innerHTML = '<option>暂无课后记录</option>';
     return;
   }
-  select.innerHTML = records.map((r, i) => {
-    const title = r.outline && r.outline[0] ? r.outline[0].text : '无主题';
-    return '<option value="' + i + '">' + (r.date || '未设置') + ' - ' + escapeHtml(title) + '</option>';
+  select.innerHTML = records.map(function (r, i) {
+    const title = r.outline && r.outline[0] && r.outline[0].text ? r.outline[0].text : '无主题';
+    return '<option value="' + i + '">' + escapeHtml(r.date || '未设置') + ' - ' + escapeHtml(title) + '</option>';
   }).join('');
 }
 
@@ -77,32 +84,30 @@ function updateRecordExportPreview() {
   const select = document.getElementById('exRecord');
   const preview = document.getElementById('recordExportPreview');
   const s = getCurrentStudent();
-
-  if (!s) {
-    preview.innerHTML = '<div class="export-empty">请先添加学生</div>';
+  const stage = getCurrentStageObj();
+  if (!s || !stage) {
+    preview.innerHTML = '<div class="export-empty">请先选择学生与阶段</div>';
     return;
   }
-
-  const records = studentData[currentStudent].records;
+  const records = stage.records;
   if (!records || records.length === 0) {
     preview.innerHTML = '<div class="export-empty">暂无课后记录</div>';
     return;
   }
-
-  const idx = parseInt(select.value) || 0;
-  const r = records[idx] || records[0];
+  const idx = parseInt(select.value, 10);
+  const r = records[isNaN(idx) ? 0 : idx] || records[0];
   const outlineText = r.outline && r.outline.length > 0
     ? serializeOutline(r.outline, 0, '')
     : '（暂无内容）';
 
   // 纯文本版
   const dateStr = r.date ? formatDateCN(r.date) : '—';
-  const plainText = '📋 ' + s.name + ' 课后反馈\n\n'
-    + '📅 ' + dateStr + '  ·  ' + (r.status || '—') + '\n\n'
-    + '📖 本课内容\n' + outlineText + '\n\n'
-    + '💡 表现评价\n' + (r.performance || '—') + '\n\n'
-    + '📝 作业布置\n' + (r.homework || '—') + '\n\n'
-    + '💬 家长反馈\n' + (r.feedback || '—');
+  const plainText = '📋 ' + s.name + ' 课后反馈\n\n' +
+    '📅 ' + dateStr + '  ·  ' + (r.status || '—') + '\n\n' +
+    '📖 本课内容\n' + outlineText + '\n\n' +
+    '💡 表现评价\n' + (r.performance || '—') + '\n\n' +
+    '📝 作业布置\n' + (r.homework || '—') + '\n\n' +
+    '💬 家长反馈\n' + (r.feedback || '—');
 
   // HTML版
   const statusColor = getStatusColorHex(r.status);
@@ -110,31 +115,32 @@ function updateRecordExportPreview() {
     ? '<div class="export-outline">' + renderOutlineHtml(r.outline, 0, '') + '</div>'
     : '<div class="export-empty-line">（暂无内容）</div>';
 
-  preview.innerHTML = '<div class="export-card-inner">'
-    + '<div class="export-header">'
-    + '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课后反馈</div>'
-    + '<div class="export-meta">'
-    + '<span class="export-meta-date">📅 ' + dateStr + '</span>'
-    + '<span class="export-meta-status" style="color:' + statusColor + '">' + (r.status || '—') + '</span>'
-    + '</div>'
-    + '</div>'
-    + '<div class="export-section">'
-    + '<div class="export-section-title">📖 本课内容</div>'
-    + outlineHtml
-    + '</div>'
-    + '<div class="export-section">'
-    + '<div class="export-section-title">💡 表现评价</div>'
-    + '<div class="export-section-body">' + escapeHtml(r.performance || '—') + '</div>'
-    + '</div>'
-    + '<div class="export-section">'
-    + '<div class="export-section-title">📝 作业布置</div>'
-    + '<div class="export-section-body pre-line">' + escapeHtml(r.homework || '—') + '</div>'
-    + '</div>'
-    + '<div class="export-section">'
-    + '<div class="export-section-title">💬 家长反馈</div>'
-    + '<div class="export-section-body pre-line">' + escapeHtml(r.feedback || '—') + '</div>'
-    + '</div>'
-    + '</div>';
+  preview.innerHTML = '<div class="export-card-inner">' +
+    '<div class="export-header">' +
+    '<div class="export-title">📋 ' + escapeHtml(s.name) + ' 课后反馈</div>' +
+    '<div class="export-subtitle">' + escapeHtml(stage.name) + '</div>' +
+    '<div class="export-meta">' +
+    '<span class="export-meta-date">📅 ' + dateStr + '</span>' +
+    '<span class="export-meta-status" style="color:' + statusColor + '">' + escapeHtml(r.status || '—') + '</span>' +
+    '</div>' +
+    '</div>' +
+    '<div class="export-section">' +
+    '<div class="export-section-title">📖 本课内容</div>' +
+    outlineHtml +
+    '</div>' +
+    '<div class="export-section">' +
+    '<div class="export-section-title">💡 表现评价</div>' +
+    '<div class="export-section-body">' + escapeHtml(r.performance || '—') + '</div>' +
+    '</div>' +
+    '<div class="export-section">' +
+    '<div class="export-section-title">📝 作业布置</div>' +
+    '<div class="export-section-body pre-line">' + escapeHtml(r.homework || '—') + '</div>' +
+    '</div>' +
+    '<div class="export-section">' +
+    '<div class="export-section-title">💬 家长反馈</div>' +
+    '<div class="export-section-body pre-line">' + escapeHtml(r.feedback || '—') + '</div>' +
+    '</div>' +
+    '</div>';
   preview.dataset.plainText = plainText;
 }
 
@@ -145,16 +151,20 @@ function copyRecordExport() {
 }
 
 function downloadRecordImage() {
-  downloadElementImage('recordExportPreview', '课后反馈_' + (getCurrentStudent() ? getCurrentStudent().name : '学生'));
+  const s = getCurrentStudent();
+  const stage = getCurrentStageObj();
+  let prefix = '课后反馈_' + (s ? s.name : '学生');
+  if (stage) prefix += '_' + stage.name;
+  downloadElementImage('recordExportPreview', prefix);
 }
 
 // ========== 通用工具 ==========
 
 function copyToClipboard(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(text).then(function () {
       alert('已复制到剪贴板！');
-    }).catch(() => {
+    }).catch(function () {
       fallbackCopy(text);
     });
   } else {
@@ -184,7 +194,7 @@ function formatDateCN(dateStr) {
   if (isNaN(d.getTime())) return dateStr;
   const m = d.getMonth() + 1;
   const day = d.getDate();
-  const week = ['日','一','二','三','四','五','六'][d.getDay()];
+  const week = ['日', '一', '二', '三', '四', '五', '六'][d.getDay()];
   return m + '月' + day + '日 周' + week;
 }
 
@@ -198,13 +208,13 @@ function getStatusColorHex(status) {
 
 function renderOutlineHtml(nodes, level, prefix) {
   let html = '';
-  nodes.forEach((node, idx) => {
+  nodes.forEach(function (node, idx) {
     let bullet = '';
     if (level === 0) bullet = (idx + 1) + '.';
     else bullet = prefix + '.' + (idx + 1);
-    html += '<div class="export-outline-line" style="padding-left:' + (level * 16) + 'px">'
-      + '<span class="export-outline-num">' + bullet + '</span> ' + escapeHtml(node.text)
-      + '</div>';
+    html += '<div class="export-outline-line" style="padding-left:' + (level * 16) + 'px">' +
+      '<span class="export-outline-num">' + bullet + '</span> ' + escapeHtml(node.text) +
+      '</div>';
     if (node.children && node.children.length > 0) {
       html += renderOutlineHtml(node.children, level + 1, bullet);
     }
@@ -215,13 +225,14 @@ function renderOutlineHtml(nodes, level, prefix) {
 function downloadElementImage(elementId, filenamePrefix) {
   if (typeof html2canvas !== 'undefined') {
     const element = document.getElementById(elementId);
-    const date = new Date().toISOString().slice(0,10);
+    if (!element) return;
+    const date = new Date().toISOString().slice(0, 10);
     html2canvas(element, {
       scale: 2,
       backgroundColor: '#ffffff',
       useCORS: true,
       logging: false
-    }).then(canvas => {
+    }).then(function (canvas) {
       const link = document.createElement('a');
       link.download = filenamePrefix + '_' + date + '.png';
       link.href = canvas.toDataURL('image/png');
